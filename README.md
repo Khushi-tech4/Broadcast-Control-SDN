@@ -1,95 +1,78 @@
-# 📡 Broadcast Control using SDN (POX Controller)
+📡 Broadcast Control using SDN (POX Controller)
+📌 Problem Statement
 
-## 📌 Project Overview
+In Software Defined Networking (SDN), excessive broadcast traffic can lead to network congestion and broadcast storms, which degrade overall network performance.
+This project implements a POX-based SDN controller that monitors broadcast packets and restricts them using a threshold-based control mechanism to ensure efficient network operation and prevent flooding.
 
-This project implements a Software Defined Networking (SDN) controller using POX to monitor and control broadcast traffic in a network.
+🎯 Objectives
+Monitor broadcast packets in the network
+Detect excessive broadcast traffic
+Limit broadcast packets using a predefined threshold
+Prevent network congestion and broadcast storms
+Improve overall network efficiency using SDN control logic
+🛠️ Technologies Used
+Python
+POX SDN Controller
+Mininet Network Emulator
+Linux (Ubuntu / WSL)
+⚙️ Conditions to be Satisfied (Core Logic)
 
-Excessive broadcast packets can lead to network congestion and broadcast storms. This system limits broadcast traffic using a threshold-based approach.
+The controller enforces the following conditions:
 
----
+Packet must be a broadcast packet (FF:FF:FF:FF:FF:FF)
+Source MAC address is tracked individually
+A counter is maintained per source
+If broadcast count ≤ threshold → Allow packet
+If broadcast count > threshold → Block packet
+Decision is made in real-time by the POX controller
+🔄 Flow of Execution
 
-## 🎯 Objectives
+Start Network
+→ Packet Received by Switch
+→ Sent to POX Controller
+→ Check if Broadcast Packet
+→ Identify Source MAC
+→ Increment Counter
+→ Compare with Threshold
+  ├── If within limit → Forward Packet
+  └── If exceeded → Drop Packet
 
-* Monitor broadcast packets in the network
-* Control excessive broadcast traffic
-* Prevent network congestion and broadcast storms
+🧰 Setup & Execution Steps
+Step 1: Install Requirements
 
----
+Make sure you have:
 
-## 🛠️ Technologies Used
-
-* Python
-* POX Controller
-* Mininet
-* Linux (Ubuntu/WSL)
-
----
-
-## ⚙️ How It Works
-
-1. POX controller listens for incoming packets
-2. Detects broadcast packets (FF:FF:FF:FF:FF:FF)
-3. Counts packets per source MAC address
-4. Allows packets up to a threshold
-5. Blocks packets when threshold is exceeded
-
----
-
-## 📊 Flow of Execution
-
-Start → Packet Received → Check Broadcast → Count Packets →
-If count ≤ Threshold → Allow
-If count > Threshold → Block
-
----
-
-## 📸 Results
-
-* Normal communication works successfully
-* Broadcast traffic is monitored
-* Excessive broadcast packets are blocked
-
----
-
-## 🚀 How to Run
-
-### Step 1: Start POX Controller
-
-```bash
+Mininet
+POX Controller
+Python 2.7 (recommended for POX)
+Step 2: Start POX Controller
 cd ~/pox
 ./pox.py log.level --DEBUG broadcast_control
-```
-
-### Step 2: Run Mininet
-
-```bash
+Step 3: Run Mininet Topology
 sudo mn --topo single,4 --controller=remote
-```
+Step 4: Test Broadcast Control
 
-### Step 3: Test
+Inside Mininet CLI:
 
-```bash
 pingall
 h1 ping -b 10.0.0.255
-```
+📊 Expected Output
+✅ Normal Scenario
+Initial broadcast packets are allowed
+Hosts communicate successfully
+Controller logs packet flow
+⚠️ After Threshold Exceeded
+Broadcast packets from same source are blocked
+Controller drops excessive packets
+Network congestion is reduced
+📸 Result Summary
+Broadcast traffic is successfully monitored
+Threshold-based filtering is applied
+Network remains stable under broadcast load
+Demonstrates SDN-based intelligent traffic control
+🎓 Conclusion
 
----
+This project demonstrates how SDN controllers like POX can be used to intelligently manage network traffic. By applying a threshold-based broadcast control mechanism, the system effectively prevents broadcast storms and improves overall network performance.
 
-## ✅ Output
-
-* Broadcast allowed initially
-* Blocked after threshold exceeded
-
----
-
-## 🎓 Conclusion
-
-This project demonstrates how SDN controllers can intelligently manage and restrict broadcast traffic to improve network performance.
-
----
-
-## 👩‍💻 Authors
-
-* KHUSHI GUPTA
-
----
+👩‍💻 Authors
+Khushi Gupta
