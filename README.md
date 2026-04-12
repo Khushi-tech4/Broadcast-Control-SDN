@@ -57,7 +57,7 @@ Inside Mininet CLI:
 pingall
 h1 ping -b 10.0.0.255
 📊 Expected Output
-✅ Normal Scenario
+''''✅ Normal Scenario''''
 Initial broadcast packets are allowed
 Hosts communicate successfully
 Controller logs packet flow
