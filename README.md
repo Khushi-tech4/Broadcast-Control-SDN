@@ -1,78 +1,122 @@
-📡 Broadcast Control using SDN (POX Controller)
+🚀 Broadcast Traffic Control using SDN (Ryu + Mininet)
+👤 Author
+
+Name:Khushi Gupta
+Course: BTech CSE( AI&ML)
+Project Type: Individual SDN Mininet Project
+
 📌 Problem Statement
 
-In Software Defined Networking (SDN), excessive broadcast traffic can lead to network congestion and broadcast storms, which degrade overall network performance.
-This project implements a POX-based SDN controller that monitors broadcast packets and restricts them using a threshold-based control mechanism to ensure efficient network operation and prevent flooding.
+In traditional networks, broadcast traffic (such as ARP requests) can lead to broadcast storms, causing network congestion and performance degradation.
+
+This project implements a Software Defined Networking (SDN) based solution using a Ryu controller to detect, control, and limit excessive broadcast traffic by dynamically installing OpenFlow rules in the switch.
 
 🎯 Objectives
-Monitor broadcast packets in the network
-Detect excessive broadcast traffic
-Limit broadcast packets using a predefined threshold
-Prevent network congestion and broadcast storms
-Improve overall network efficiency using SDN control logic
+Detect broadcast packets in the network
+Allow limited broadcast traffic for normal operation
+Block excessive broadcast traffic after a defined threshold
+Install dynamic flow rules using OpenFlow
+Observe network performance improvement
 🛠️ Technologies Used
-Python
-POX SDN Controller
-Mininet Network Emulator
-Linux (Ubuntu / WSL)
-⚙️ Conditions to be Satisfied (Core Logic)
+Mininet (Network Emulator)
+Ryu SDN Controller
+OpenFlow 1.3
+iperf (Throughput testing)
+ping (Latency testing)
+Wireshark (Optional analysis tool)
+🖧 Network Topology
 
-The controller enforces the following conditions:
+Single switch topology with 3 hosts:
 
-Packet must be a broadcast packet (FF:FF:FF:FF:FF:FF)
-Source MAC address is tracked individually
-A counter is maintained per source
-If broadcast count ≤ threshold → Allow packet
-If broadcast count > threshold → Block packet
-Decision is made in real-time by the POX controller
-🔄 Flow of Execution
+h1 --- s1 --- h2
+     |
+     h3
 
-Start Network
-→ Packet Received by Switch
-→ Sent to POX Controller
-→ Check if Broadcast Packet
-→ Identify Source MAC
-→ Increment Counter
-→ Compare with Threshold
-  ├── If within limit → Forward Packet
-  └── If exceeded → Drop Packet
+⚙️ Setup Instructions
 
-🧰 Setup & Execution Steps
-Step 1: Install Requirements
+Step 1: Clean Mininet
+sudo mn -c
 
-Make sure you have:
+Step 2: Run Ryu Controller
+ryu-manager broadcast_control.py
 
-Mininet
-POX Controller
-Python 2.7 (recommended for POX)
-Step 2: Start POX Controller
-cd ~/pox
-./pox.py log.level --DEBUG broadcast_control
-Step 3: Run Mininet Topology
-sudo mn --topo single,4 --controller=remote
-Step 4: Test Broadcast Control
+Step 3: Start Mininet
+sudo mn --topo single,3 --controller remote
 
-Inside Mininet CLI:
+▶️ Execution Steps
 
+Generate broadcast traffic (ARP flood simulation):
+h1 arping -c 20 10.0.0.99
+
+Check connectivity:
 pingall
-h1 ping -b 10.0.0.255
-📊 Expected Output
-''''✅ Normal Scenario''''
-Initial broadcast packets are allowed
-Hosts communicate successfully
-Controller logs packet flow
-⚠️ After Threshold Exceeded
-Broadcast packets from same source are blocked
-Controller drops excessive packets
-Network congestion is reduced
-📸 Result Summary
-Broadcast traffic is successfully monitored
-Threshold-based filtering is applied
-Network remains stable under broadcast load
-Demonstrates SDN-based intelligent traffic control
-🎓 Conclusion
 
-This project demonstrates how SDN controllers like POX can be used to intelligently manage network traffic. By applying a threshold-based broadcast control mechanism, the system effectively prevents broadcast storms and improves overall network performance.
+Measure throughput:
+iperf h1 h2
 
-👩‍💻 Authors
-Khushi Gupta
+🎯 Expected Output
+
+Controller logs:
+[ALLOWED] Broadcast Packet #1
+[ALLOWED] Broadcast Packet #2
+[ALLOWED] Broadcast Packet #3
+[ALLOWED] Broadcast Packet #4
+[ALLOWED] Broadcast Packet #5
+[BLOCKED] Broadcast Packet #6
+🚫 INSTALLING DROP RULE 🚫
+
+This shows that initial broadcast packets are allowed, and after reaching threshold, broadcast traffic is blocked using a flow rule.
+
+📊 Flow Table Verification
+
+Command:
+sudo ovs-ofctl -O OpenFlow13 dump-flows s1
+
+Expected output includes:
+priority=100,dl_dst=ff:ff:ff:ff:ff:ff actions=drop
+
+This confirms that broadcast packets are being dropped at the switch level using OpenFlow rules.
+
+📈 Performance Analysis
+Ping (Latency Test)
+
+h1 ping h2
+
+Used to measure delay between hosts and verify connectivity.
+
+iperf (Throughput Test)
+
+iperf h1 h2
+
+Example output:
+33.4 Gbits/sec
+
+This high value is expected because Mininet runs in a virtual environment without real hardware constraints.
+
+🔍 Observations
+Broadcast packets are initially forwarded to the controller
+After threshold, a high-priority drop rule is installed
+Switch blocks broadcast traffic directly
+Network load is reduced after control implementation
+📸 Proof of Execution
+
+Screenshots included in GitHub repository:
+
+Controller logs showing allowed and blocked packets
+Flow table showing DROP rule
+Mininet execution (arping / ping / iperf)
+Performance results
+🧠 SDN Concepts Demonstrated
+Controller–Switch communication
+Packet-in event handling
+Match–Action flow rules
+Dynamic flow rule installation
+Traffic monitoring and control
+✅ Conclusion
+
+This project demonstrates how SDN can effectively control broadcast traffic by dynamically installing OpenFlow rules. It improves network efficiency by reducing unnecessary broadcast flooding and optimizing traffic flow.
+
+📚 References
+Ryu SDN Framework Documentation
+Mininet Official Documentation
+OpenFlow Switch Specification
