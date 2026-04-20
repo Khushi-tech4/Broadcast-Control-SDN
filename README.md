@@ -115,8 +115,7 @@ Traffic monitoring and control
 ✅ Conclusion
 
 This project demonstrates how SDN can effectively control broadcast traffic by dynamically installing OpenFlow rules. It improves network efficiency by reducing unnecessary broadcast flooding and optimizing traffic flow.
-
-📚 References
+ References
 Ryu SDN Framework Documentation
 Mininet Official Documentation
 OpenFlow Switch Specification 
